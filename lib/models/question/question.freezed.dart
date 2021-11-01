@@ -14,32 +14,19 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more informations: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 Question _$QuestionFromJson(Map<String, dynamic> json) {
-  switch (json['runtimeType'] as String?) {
-    case 'data':
-      return _QuestionData.fromJson(json);
-    case 'error':
-      return _QuestionError.fromJson(json);
-
-    default:
-      throw CheckedFromJsonException(json, 'runtimeType', 'Question',
-          'Invalid union type "${json['runtimeType']}"!');
-  }
+  return _QuestionData.fromJson(json);
 }
 
 /// @nodoc
 class _$QuestionTearOff {
   const _$QuestionTearOff();
 
-  _QuestionData data({required String text, required Answer answer}) {
+  _QuestionData data(
+      {required String uuid, required String text, required Answer answer}) {
     return _QuestionData(
+      uuid: uuid,
       text: text,
       answer: answer,
-    );
-  }
-
-  _QuestionError error([String? error]) {
-    return _QuestionError(
-      error,
     );
   }
 
@@ -53,51 +40,55 @@ const $Question = _$QuestionTearOff();
 
 /// @nodoc
 mixin _$Question {
+  String get uuid => throw _privateConstructorUsedError;
+  String get text => throw _privateConstructorUsedError;
+  Answer get answer => throw _privateConstructorUsedError;
+
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String text, Answer answer) data,
-    required TResult Function(String? error) error,
+    required TResult Function(String uuid, String text, Answer answer) data,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(String text, Answer answer)? data,
-    TResult Function(String? error)? error,
+    TResult Function(String uuid, String text, Answer answer)? data,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String text, Answer answer)? data,
-    TResult Function(String? error)? error,
+    TResult Function(String uuid, String text, Answer answer)? data,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_QuestionData value) data,
-    required TResult Function(_QuestionError value) error,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult Function(_QuestionData value)? data,
-    TResult Function(_QuestionError value)? error,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_QuestionData value)? data,
-    TResult Function(_QuestionError value)? error,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $QuestionCopyWith<Question> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
 abstract class $QuestionCopyWith<$Res> {
   factory $QuestionCopyWith(Question value, $Res Function(Question) then) =
       _$QuestionCopyWithImpl<$Res>;
+  $Res call({String uuid, String text, Answer answer});
+
+  $AnswerCopyWith<$Res> get answer;
 }
 
 /// @nodoc
@@ -107,34 +98,18 @@ class _$QuestionCopyWithImpl<$Res> implements $QuestionCopyWith<$Res> {
   final Question _value;
   // ignore: unused_field
   final $Res Function(Question) _then;
-}
-
-/// @nodoc
-abstract class _$QuestionDataCopyWith<$Res> {
-  factory _$QuestionDataCopyWith(
-          _QuestionData value, $Res Function(_QuestionData) then) =
-      __$QuestionDataCopyWithImpl<$Res>;
-  $Res call({String text, Answer answer});
-
-  $AnswerCopyWith<$Res> get answer;
-}
-
-/// @nodoc
-class __$QuestionDataCopyWithImpl<$Res> extends _$QuestionCopyWithImpl<$Res>
-    implements _$QuestionDataCopyWith<$Res> {
-  __$QuestionDataCopyWithImpl(
-      _QuestionData _value, $Res Function(_QuestionData) _then)
-      : super(_value, (v) => _then(v as _QuestionData));
-
-  @override
-  _QuestionData get _value => super._value as _QuestionData;
 
   @override
   $Res call({
+    Object? uuid = freezed,
     Object? text = freezed,
     Object? answer = freezed,
   }) {
-    return _then(_QuestionData(
+    return _then(_value.copyWith(
+      uuid: uuid == freezed
+          ? _value.uuid
+          : uuid // ignore: cast_nullable_to_non_nullable
+              as String,
       text: text == freezed
           ? _value.text
           : text // ignore: cast_nullable_to_non_nullable
@@ -155,13 +130,61 @@ class __$QuestionDataCopyWithImpl<$Res> extends _$QuestionCopyWithImpl<$Res>
 }
 
 /// @nodoc
+abstract class _$QuestionDataCopyWith<$Res> implements $QuestionCopyWith<$Res> {
+  factory _$QuestionDataCopyWith(
+          _QuestionData value, $Res Function(_QuestionData) then) =
+      __$QuestionDataCopyWithImpl<$Res>;
+  @override
+  $Res call({String uuid, String text, Answer answer});
+
+  @override
+  $AnswerCopyWith<$Res> get answer;
+}
+
+/// @nodoc
+class __$QuestionDataCopyWithImpl<$Res> extends _$QuestionCopyWithImpl<$Res>
+    implements _$QuestionDataCopyWith<$Res> {
+  __$QuestionDataCopyWithImpl(
+      _QuestionData _value, $Res Function(_QuestionData) _then)
+      : super(_value, (v) => _then(v as _QuestionData));
+
+  @override
+  _QuestionData get _value => super._value as _QuestionData;
+
+  @override
+  $Res call({
+    Object? uuid = freezed,
+    Object? text = freezed,
+    Object? answer = freezed,
+  }) {
+    return _then(_QuestionData(
+      uuid: uuid == freezed
+          ? _value.uuid
+          : uuid // ignore: cast_nullable_to_non_nullable
+              as String,
+      text: text == freezed
+          ? _value.text
+          : text // ignore: cast_nullable_to_non_nullable
+              as String,
+      answer: answer == freezed
+          ? _value.answer
+          : answer // ignore: cast_nullable_to_non_nullable
+              as Answer,
+    ));
+  }
+}
+
+/// @nodoc
 @JsonSerializable()
 class _$_QuestionData implements _QuestionData {
-  const _$_QuestionData({required this.text, required this.answer});
+  const _$_QuestionData(
+      {required this.uuid, required this.text, required this.answer});
 
   factory _$_QuestionData.fromJson(Map<String, dynamic> json) =>
       _$$_QuestionDataFromJson(json);
 
+  @override
+  final String uuid;
   @override
   final String text;
   @override
@@ -169,13 +192,15 @@ class _$_QuestionData implements _QuestionData {
 
   @override
   String toString() {
-    return 'Question.data(text: $text, answer: $answer)';
+    return 'Question.data(uuid: $uuid, text: $text, answer: $answer)';
   }
 
   @override
   bool operator ==(dynamic other) {
     return identical(this, other) ||
         (other is _QuestionData &&
+            (identical(other.uuid, uuid) ||
+                const DeepCollectionEquality().equals(other.uuid, uuid)) &&
             (identical(other.text, text) ||
                 const DeepCollectionEquality().equals(other.text, text)) &&
             (identical(other.answer, answer) ||
@@ -185,6 +210,7 @@ class _$_QuestionData implements _QuestionData {
   @override
   int get hashCode =>
       runtimeType.hashCode ^
+      const DeepCollectionEquality().hash(uuid) ^
       const DeepCollectionEquality().hash(text) ^
       const DeepCollectionEquality().hash(answer);
 
@@ -196,30 +222,27 @@ class _$_QuestionData implements _QuestionData {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String text, Answer answer) data,
-    required TResult Function(String? error) error,
+    required TResult Function(String uuid, String text, Answer answer) data,
   }) {
-    return data(text, answer);
+    return data(uuid, text, answer);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(String text, Answer answer)? data,
-    TResult Function(String? error)? error,
+    TResult Function(String uuid, String text, Answer answer)? data,
   }) {
-    return data?.call(text, answer);
+    return data?.call(uuid, text, answer);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String text, Answer answer)? data,
-    TResult Function(String? error)? error,
+    TResult Function(String uuid, String text, Answer answer)? data,
     required TResult orElse(),
   }) {
     if (data != null) {
-      return data(text, answer);
+      return data(uuid, text, answer);
     }
     return orElse();
   }
@@ -228,7 +251,6 @@ class _$_QuestionData implements _QuestionData {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_QuestionData value) data,
-    required TResult Function(_QuestionError value) error,
   }) {
     return data(this);
   }
@@ -237,7 +259,6 @@ class _$_QuestionData implements _QuestionData {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult Function(_QuestionData value)? data,
-    TResult Function(_QuestionError value)? error,
   }) {
     return data?.call(this);
   }
@@ -246,7 +267,6 @@ class _$_QuestionData implements _QuestionData {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_QuestionData value)? data,
-    TResult Function(_QuestionError value)? error,
     required TResult orElse(),
   }) {
     if (data != null) {
@@ -257,164 +277,27 @@ class _$_QuestionData implements _QuestionData {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$_QuestionDataToJson(this)..['runtimeType'] = 'data';
+    return _$$_QuestionDataToJson(this);
   }
 }
 
 abstract class _QuestionData implements Question {
-  const factory _QuestionData({required String text, required Answer answer}) =
-      _$_QuestionData;
+  const factory _QuestionData(
+      {required String uuid,
+      required String text,
+      required Answer answer}) = _$_QuestionData;
 
   factory _QuestionData.fromJson(Map<String, dynamic> json) =
       _$_QuestionData.fromJson;
 
+  @override
+  String get uuid => throw _privateConstructorUsedError;
+  @override
   String get text => throw _privateConstructorUsedError;
+  @override
   Answer get answer => throw _privateConstructorUsedError;
+  @override
   @JsonKey(ignore: true)
   _$QuestionDataCopyWith<_QuestionData> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class _$QuestionErrorCopyWith<$Res> {
-  factory _$QuestionErrorCopyWith(
-          _QuestionError value, $Res Function(_QuestionError) then) =
-      __$QuestionErrorCopyWithImpl<$Res>;
-  $Res call({String? error});
-}
-
-/// @nodoc
-class __$QuestionErrorCopyWithImpl<$Res> extends _$QuestionCopyWithImpl<$Res>
-    implements _$QuestionErrorCopyWith<$Res> {
-  __$QuestionErrorCopyWithImpl(
-      _QuestionError _value, $Res Function(_QuestionError) _then)
-      : super(_value, (v) => _then(v as _QuestionError));
-
-  @override
-  _QuestionError get _value => super._value as _QuestionError;
-
-  @override
-  $Res call({
-    Object? error = freezed,
-  }) {
-    return _then(_QuestionError(
-      error == freezed
-          ? _value.error
-          : error // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
-  }
-}
-
-/// @nodoc
-@JsonSerializable()
-class _$_QuestionError implements _QuestionError {
-  const _$_QuestionError([this.error]);
-
-  factory _$_QuestionError.fromJson(Map<String, dynamic> json) =>
-      _$$_QuestionErrorFromJson(json);
-
-  @override
-  final String? error;
-
-  @override
-  String toString() {
-    return 'Question.error(error: $error)';
-  }
-
-  @override
-  bool operator ==(dynamic other) {
-    return identical(this, other) ||
-        (other is _QuestionError &&
-            (identical(other.error, error) ||
-                const DeepCollectionEquality().equals(other.error, error)));
-  }
-
-  @override
-  int get hashCode =>
-      runtimeType.hashCode ^ const DeepCollectionEquality().hash(error);
-
-  @JsonKey(ignore: true)
-  @override
-  _$QuestionErrorCopyWith<_QuestionError> get copyWith =>
-      __$QuestionErrorCopyWithImpl<_QuestionError>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(String text, Answer answer) data,
-    required TResult Function(String? error) error,
-  }) {
-    return error(this.error);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult Function(String text, Answer answer)? data,
-    TResult Function(String? error)? error,
-  }) {
-    return error?.call(this.error);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String text, Answer answer)? data,
-    TResult Function(String? error)? error,
-    required TResult orElse(),
-  }) {
-    if (error != null) {
-      return error(this.error);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(_QuestionData value) data,
-    required TResult Function(_QuestionError value) error,
-  }) {
-    return error(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult Function(_QuestionData value)? data,
-    TResult Function(_QuestionError value)? error,
-  }) {
-    return error?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(_QuestionData value)? data,
-    TResult Function(_QuestionError value)? error,
-    required TResult orElse(),
-  }) {
-    if (error != null) {
-      return error(this);
-    }
-    return orElse();
-  }
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$_QuestionErrorToJson(this)..['runtimeType'] = 'error';
-  }
-}
-
-abstract class _QuestionError implements Question {
-  const factory _QuestionError([String? error]) = _$_QuestionError;
-
-  factory _QuestionError.fromJson(Map<String, dynamic> json) =
-      _$_QuestionError.fromJson;
-
-  String? get error => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  _$QuestionErrorCopyWith<_QuestionError> get copyWith =>
       throw _privateConstructorUsedError;
 }
