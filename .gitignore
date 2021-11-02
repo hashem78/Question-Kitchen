@@ -49,3 +49,4 @@ app.*.map.json
 *.freezed.dart
 *.g.dart
 *.cache
+node_modules

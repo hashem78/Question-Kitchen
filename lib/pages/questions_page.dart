@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:file_saver/file_saver.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -10,6 +11,7 @@ import 'package:question_kitchen/models/folder/questionfolder.dart';
 import 'package:question_kitchen/providers.dart';
 import 'package:question_kitchen/widgets/new_question_form_widget.dart';
 import 'package:question_kitchen/widgets/question_tile_widget.dart';
+import 'package:http/http.dart' as http;
 
 class QuestionsPage extends HookWidget {
   const QuestionsPage({Key? key}) : super(key: key);
@@ -90,23 +92,25 @@ class QuestionsPage extends HookWidget {
     );
   }
 
-  void exportToTxt(BuildContext context) {
+  Future<void> exportToTxt(BuildContext context) async {
     final folder = context.read(folderProvider);
-    context.read(questionsPovider(folder)).whenData(
-      (questions) async {
-        var ans = "";
-        for (final question in questions) {
-          ans += "Q: ${question.text}\nA: ${question.answer.text}\n";
-        }
-        await FileSaver.instance.saveFile(
-          'test.txt',
-          Uint8List.fromList(
-            utf8.encode(ans),
-          ),
-          'txt',
-          mimeType: MimeType.TEXT,
-        );
+    final user = FirebaseAuth.instance.currentUser!;
+    final req = await http.post(
+      Uri.parse(
+        'https://us-central1-question-kitchen.cloudfunctions.net/exportQuestions',
+      ),
+      body: {
+        'user': user.uid,
+        'folder': folder.uid,
       },
+    );
+    final parsedReq = jsonDecode(req.body);
+    final bytes = parsedReq['bytes']['data'];
+    await FileSaver.instance.saveFile(
+      folder.title,
+      Uint8List.fromList(List<int>.from(bytes)),
+      'txt',
+      mimeType: MimeType.TEXT,
     );
   }
 }
