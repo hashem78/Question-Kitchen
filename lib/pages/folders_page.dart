@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:question_kitchen/pages/login_page.dart';
 import 'package:question_kitchen/providers.dart';
 import 'package:question_kitchen/widgets/folder_tile_widget.dart';
 import 'package:question_kitchen/widgets/new_folder_form_widget.dart';
@@ -21,7 +22,12 @@ class FoldersPage extends HookWidget {
               return [
                 PopupMenuItem(
                   child: const Text('Log out'),
-                  onTap: () async => await FirebaseAuth.instance.signOut(),
+                  onTap: () async {
+                    await FirebaseAuth.instance.signOut();
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (context) => const LoginPage()),
+                        (Route<dynamic> route) => false);
+                  },
                 ),
               ];
             },

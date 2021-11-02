@@ -1,20 +1,28 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:question_kitchen/pages/landing_page.dart';
+import 'package:question_kitchen/pages/folders_page.dart';
+import 'package:question_kitchen/pages/login_page.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(const MyApp());
+  final user = FirebaseAuth.instance.currentUser;
+  if (user == null) {
+    runApp(const MyApp(home: LoginPage()));
+  } else {
+    runApp(const MyApp(home: FoldersPage()));
+  }
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({Key? key, required this.home}) : super(key: key);
+  final Widget home;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +36,7 @@ class MyApp extends StatelessWidget {
               primarySwatch: Colors.blue,
               textTheme: GoogleFonts.montserratTextTheme(),
             ),
-            home: const LandingPage(),
+            home: home,
           );
         },
       ),
