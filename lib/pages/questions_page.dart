@@ -1,6 +1,6 @@
-import 'dart:convert';
-import 'dart:typed_data';
+import 'dart:async';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:file_saver/file_saver.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -40,8 +40,34 @@ class QuestionsPage extends HookWidget {
                 itemBuilder: (context) {
                   return [
                     PopupMenuItem(
+                      child: const Text('Import'),
+                      onTap: () async {
+                        final pickerResults =
+                            await FilePicker.platform.pickFiles(
+                          type: FileType.custom,
+                          allowMultiple: true,
+                          withData: true,
+                          allowedExtensions: ['json'],
+                        );
+                        if (pickerResults != null) {
+                          folder.importQuestions(pickerResults.files).then(
+                            (value) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(value)),
+                              );
+                            },
+                            onError: (err) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(err.toString())),
+                              );
+                            },
+                          );
+                        }
+                      },
+                    ),
+                    PopupMenuItem(
                       child: const Text('Export'),
-                      onTap: () => exportToTxt(context),
+                      onTap: () => exportToJson(context),
                     ),
                   ];
                 },
@@ -91,7 +117,7 @@ class QuestionsPage extends HookWidget {
     );
   }
 
-  Future<void> exportToTxt(BuildContext context) async {
+  Future<void> exportToJson(BuildContext context) async {
     final folder = context.read(folderProvider);
     final user = FirebaseAuth.instance.currentUser!;
     final req = await http.post(
@@ -103,13 +129,11 @@ class QuestionsPage extends HookWidget {
         'folder': folder.uid,
       },
     );
-    final parsedReq = jsonDecode(req.body);
-    final bytes = parsedReq['bytes']['data'];
     await FileSaver.instance.saveFile(
       folder.title,
-      Uint8List.fromList(List<int>.from(bytes)),
-      'txt',
-      mimeType: MimeType.TEXT,
+      req.bodyBytes,
+      'json',
+      mimeType: MimeType.JSON,
     );
   }
 }

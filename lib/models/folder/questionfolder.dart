@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_debounce/easy_debounce.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:question_kitchen/models/question/question.dart';
@@ -41,6 +43,42 @@ abstract class QuestionFolder with _$QuestionFolder {
         },
       ),
     );
+  }
+
+  Future<String> importQuestions(List<PlatformFile> files) async {
+    var counter = 0;
+    try {
+      final firestore = FirebaseFirestore.instance;
+      final auth = FirebaseAuth.instance;
+      final user = auth.currentUser!;
+      final batch = firestore.batch();
+      for (final file in files) {
+        try {
+          final decodedQuestions = jsonDecode(
+            utf8.decode(
+              file.bytes!.toList(),
+            ),
+          );
+          for (final question in decodedQuestions) {
+            counter++;
+            batch.set(
+              firestore
+                  .collection(user.uid)
+                  .doc(uid)
+                  .collection('questions')
+                  .doc(question['uuid']),
+              question,
+            );
+          }
+        } catch (e) {
+          throw Exception('Failed to parse ${file.name}');
+        }
+        batch.commit();
+      }
+    } on FirebaseException {
+      rethrow;
+    }
+    return "Imported $counter questions from ${files.length} files";
   }
 
   Future<void> removeFolder() async {

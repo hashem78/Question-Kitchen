@@ -15,15 +15,13 @@ export const exportQuestions = functions.https.onRequest(async (request, respons
         const user = body['user']
 
         const questionsQuery = await admin.firestore().collection(user).doc(folder).collection('questions').get()
+        const questions: FirebaseFirestore.DocumentData[] = []
         if (questionsQuery.size != 0) {
-            var questions = ""
             questionsQuery.forEach(element => {
                 const data = element.data()
-                questions += `\nQ: ${data['text']}\nA: ${data['answer']['text']}`
+                questions.push(data)
             });
-            response.status(200).send({
-                'bytes': Buffer.from(questions, 'utf-8')
-            })
+            response.status(200).send(questions)
         } else {
             response.status(204).send()
         }
