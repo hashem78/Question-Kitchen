@@ -1,3 +1,4 @@
+import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -41,11 +42,17 @@ class NewFolderForm extends HookWidget {
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
               onPressed: () {
-                QuestionFolder.createFolder(
-                  QuestionFolder(
-                    uid: const Uuid().v4(),
-                    title: name.text,
-                  ),
+                EasyDebounce.debounce(
+                  'add-folder',
+                  const Duration(seconds: 2),
+                  () {
+                    QuestionFolder.createFolder(
+                      QuestionFolder(
+                        uid: const Uuid().v4(),
+                        title: name.text,
+                      ),
+                    );
+                  },
                 );
               },
               child: const Text('Create'),
