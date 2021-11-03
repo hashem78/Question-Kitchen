@@ -43,6 +43,13 @@ abstract class QuestionFolder with _$QuestionFolder {
     );
   }
 
+  Future<void> removeFolder() async {
+    final firestore = FirebaseFirestore.instance;
+    final auth = FirebaseAuth.instance;
+    final user = auth.currentUser!;
+    await firestore.collection(user.uid).doc(uid).delete();
+  }
+
   Stream<List<Question>> fetchQuestions() {
     final firestore = FirebaseFirestore.instance;
     final auth = FirebaseAuth.instance;
