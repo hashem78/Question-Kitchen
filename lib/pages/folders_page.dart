@@ -70,7 +70,7 @@ class FoldersPage extends HookWidget {
       context: context,
       isScrollControlled: true,
       builder: (context) {
-        return NewFolderForm();
+        return const NewFolderForm();
       },
     );
   }

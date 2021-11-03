@@ -6,21 +6,21 @@ import 'package:question_kitchen/models/folder/questionfolder.dart';
 import 'package:uuid/uuid.dart';
 
 class NewFolderForm extends HookWidget {
-  NewFolderForm({
+  const NewFolderForm({
     Key? key,
   }) : super(key: key);
-  final formKey = GlobalKey<FormState>();
+  static final formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     final name = useTextEditingController();
-    return Padding(
-      padding: EdgeInsets.only(
-        left: 32.0,
-        right: 32.0,
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
-      child: Form(
-        key: formKey,
+    return Form(
+      key: formKey,
+      child: Padding(
+        padding: EdgeInsets.only(
+          left: 32.0,
+          right: 32.0,
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           mainAxisSize: MainAxisSize.min,
@@ -31,19 +31,16 @@ class NewFolderForm extends HookWidget {
                 fontSize: 50.sp,
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32.0),
-              child: TextFormField(
-                controller: name,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'A folder\'s name can\'t be empty';
-                  }
-                  return null;
-                },
-                decoration: const InputDecoration(
-                  hintText: "Science",
-                ),
+            TextFormField(
+              controller: name,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'A folder\'s name can\'t be empty';
+                }
+                return null;
+              },
+              decoration: const InputDecoration(
+                hintText: "Science",
               ),
             ),
             Padding(

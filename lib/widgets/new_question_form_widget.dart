@@ -7,14 +7,14 @@ import 'package:question_kitchen/models/question/question.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:uuid/uuid.dart';
 
-class NewQuestionFormWidget extends HookWidget {
-  NewQuestionFormWidget({
+class NewQuestionFormWidget extends StatelessWidget {
+  const NewQuestionFormWidget({
     Key? key,
     required this.folder,
   }) : super(key: key);
   final QuestionFolder folder;
 
-  final GlobalKey<FormState> formKey = GlobalKey();
+  static final GlobalKey<FormState> formKey = GlobalKey();
   Future<void> _submit(
     BuildContext context,
     String questionText,
