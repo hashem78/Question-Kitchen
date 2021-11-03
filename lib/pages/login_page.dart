@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:question_kitchen/pages/folders_page.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -54,6 +55,13 @@ class LoginPage extends StatelessWidget {
           ),
         );
       },
+      userValidator: MultiValidator(
+        [
+          RequiredValidator(errorText: 'This field is required'),
+          EmailValidator(errorText: 'Enter a valid email address'),
+        ],
+      ),
+      passwordValidator: RequiredValidator(errorText: 'This field is required'),
     );
   }
 }
