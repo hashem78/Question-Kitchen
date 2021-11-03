@@ -82,7 +82,8 @@ abstract class QuestionFolder with _$QuestionFolder {
             .collection(user.uid)
             .doc(uid)
             .collection('questions')
-            .add(
+            .doc(question.uuid)
+            .set(
           {
             'createdAt': FieldValue.serverTimestamp(),
             ...question.toJson(),
@@ -92,19 +93,16 @@ abstract class QuestionFolder with _$QuestionFolder {
     );
   }
 
-  Future<void> removeQuestion(String questionText) async {
+  Future<void> removeQuestion(String uuid) async {
     final firestore = FirebaseFirestore.instance;
     final auth = FirebaseAuth.instance;
     final user = auth.currentUser!;
-    final query = await firestore
+    await firestore
         .collection(user.uid)
         .doc(uid)
         .collection('questions')
-        .where('text', isEqualTo: questionText)
-        .get();
-    for (final element in query.docs) {
-      await element.reference.delete();
-    }
+        .doc(uuid)
+        .delete();
   }
 
   factory QuestionFolder.fromJson(Map<String, dynamic> json) =>
