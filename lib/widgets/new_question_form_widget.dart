@@ -7,7 +7,7 @@ import 'package:question_kitchen/models/question/question.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:uuid/uuid.dart';
 
-class NewQuestionFormWidget extends StatelessWidget {
+class NewQuestionFormWidget extends HookWidget {
   const NewQuestionFormWidget({
     Key? key,
     required this.folder,
