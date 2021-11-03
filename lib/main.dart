@@ -9,10 +9,18 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:question_kitchen/pages/folders_page.dart';
 import 'package:question_kitchen/pages/login_page.dart';
 
+Future<User?> getFirebaseUser() async {
+  User? firebaseUser = FirebaseAuth.instance.currentUser;
+
+  firebaseUser ??= await FirebaseAuth.instance.userChanges().first;
+
+  return firebaseUser;
+}
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  final user = FirebaseAuth.instance.currentUser;
+  final user = await getFirebaseUser();
   if (user == null) {
     runApp(const MyApp(home: LoginPage()));
   } else {
