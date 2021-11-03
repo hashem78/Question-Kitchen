@@ -51,6 +51,7 @@ abstract class QuestionFolder with _$QuestionFolder {
         .collection(user.uid)
         .doc(uid)
         .collection('questions')
+        .orderBy('createdAt')
         .snapshots()
         .transform(
       StreamTransformer.fromHandlers(
@@ -81,7 +82,12 @@ abstract class QuestionFolder with _$QuestionFolder {
             .collection(user.uid)
             .doc(uid)
             .collection('questions')
-            .add(question.toJson());
+            .add(
+          {
+            'createdAt': FieldValue.serverTimestamp(),
+            ...question.toJson(),
+          },
+        );
       },
     );
   }

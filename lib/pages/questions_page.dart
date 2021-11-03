@@ -61,7 +61,6 @@ class QuestionsPage extends HookWidget {
                   return const Center(child: Text("There are no questions"));
                 }
                 return ListView.builder(
-                  reverse: true,
                   itemBuilder: (context, index) {
                     return QuestionTileWidget(question: data[index]);
                   },
