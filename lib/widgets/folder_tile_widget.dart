@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:question_kitchen/models/folder/questionfolder.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:question_kitchen/pages/questions_page.dart';
 import 'package:question_kitchen/providers.dart';
 
-class FolderTileWidget extends HookWidget {
+class FolderTileWidget extends StatelessWidget {
   const FolderTileWidget({
     Key? key,
     required this.folder,
