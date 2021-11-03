@@ -25,7 +25,8 @@ class FoldersPage extends HookWidget {
                   onTap: () async {
                     await FirebaseAuth.instance.signOut();
                     Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => const LoginPage()),
+                        MaterialPageRoute(
+                            builder: (context) => const LoginPage()),
                         (Route<dynamic> route) => false);
                   },
                 ),
@@ -69,7 +70,7 @@ class FoldersPage extends HookWidget {
       context: context,
       isScrollControlled: true,
       builder: (context) {
-        return const NewFolderForm();
+        return NewFolderForm();
       },
     );
   }
