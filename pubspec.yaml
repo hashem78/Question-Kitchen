@@ -12,7 +12,6 @@ dependencies:
   flutter:
     sdk: flutter
 
-  cupertino_icons: ^1.0.2
   firebase_core: ^1.8.0
   cloud_firestore: ^2.5.4
   hooks_riverpod: ^0.14.0+5
@@ -34,8 +33,6 @@ dependencies:
   form_field_validator: ^1.1.0
   firebase_messaging: ^10.0.9
   enum_to_string: ^2.0.1
-  shared_preferences: ^2.0.8
-  cloud_functions: ^3.0.6
 
 dev_dependencies:
   flutter_test:
