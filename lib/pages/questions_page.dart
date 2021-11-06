@@ -10,6 +10,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:question_kitchen/models/folder/questionfolder.dart';
 import 'package:question_kitchen/providers.dart';
 import 'package:question_kitchen/widgets/new_question_form_widget.dart';
+import 'package:question_kitchen/widgets/qsidebar_widget.dart';
 import 'package:question_kitchen/widgets/question_tile_widget.dart';
 import 'package:http/http.dart' as http;
 
@@ -32,69 +33,71 @@ class QuestionsPage extends HookWidget {
       },
       child: Focus(
         autofocus: true,
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text(folder.title),
-            actions: [
-              PopupMenuButton<int>(
-                itemBuilder: (context) {
-                  return [
-                    PopupMenuItem(
-                      child: const Text('Import'),
-                      onTap: () async {
-                        final pickerResults =
-                            await FilePicker.platform.pickFiles(
-                          type: FileType.custom,
-                          allowMultiple: true,
-                          withData: true,
-                          allowedExtensions: ['json'],
-                        );
-                        if (pickerResults != null) {
-                          folder.importQuestions(pickerResults.files).then(
-                            (value) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(value)),
-                              );
-                            },
-                            onError: (err) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(err.toString())),
-                              );
-                            },
+        child: QSideBar(
+          right: Scaffold(
+            appBar: AppBar(
+              title: Text(folder.title),
+              actions: [
+                PopupMenuButton<int>(
+                  itemBuilder: (context) {
+                    return [
+                      PopupMenuItem(
+                        child: const Text('Import'),
+                        onTap: () async {
+                          final pickerResults =
+                              await FilePicker.platform.pickFiles(
+                            type: FileType.custom,
+                            allowMultiple: true,
+                            withData: true,
+                            allowedExtensions: ['json'],
                           );
-                        }
-                      },
-                    ),
-                    PopupMenuItem(
-                      child: const Text('Export'),
-                      onTap: () => exportToJson(context),
-                    ),
-                  ];
-                },
-              ),
-            ],
-          ),
-          floatingActionButton: FloatingActionButton(
-            child: const Icon(Icons.add),
-            onPressed: () async {
-              await _showBottomSheet(context, context.read(folderProvider));
-            },
-          ),
-          body: SafeArea(
-            child: questions.when(
-              data: (data) {
-                if (data.isEmpty) {
-                  return const Center(child: Text("There are no questions"));
-                }
-                return ListView.builder(
-                  itemBuilder: (context, index) {
-                    return QuestionTileWidget(question: data[index]);
+                          if (pickerResults != null) {
+                            folder.importQuestions(pickerResults.files).then(
+                              (value) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(value)),
+                                );
+                              },
+                              onError: (err) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(err.toString())),
+                                );
+                              },
+                            );
+                          }
+                        },
+                      ),
+                      PopupMenuItem(
+                        child: const Text('Export'),
+                        onTap: () => exportToJson(context),
+                      ),
+                    ];
                   },
-                  itemCount: data.length,
-                );
+                ),
+              ],
+            ),
+            floatingActionButton: FloatingActionButton(
+              child: const Icon(Icons.add),
+              onPressed: () async {
+                await _showBottomSheet(context, context.read(folderProvider));
               },
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (error, stackTrace) => Text(error.toString()),
+            ),
+            body: SafeArea(
+              child: questions.when(
+                data: (data) {
+                  if (data.isEmpty) {
+                    return const Center(child: Text("There are no questions"));
+                  }
+                  return ListView.builder(
+                    itemBuilder: (context, index) {
+                      return QuestionTileWidget(question: data[index]);
+                    },
+                    itemCount: data.length,
+                  );
+                },
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (error, stackTrace) => Text(error.toString()),
+              ),
             ),
           ),
         ),
