@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -26,12 +28,18 @@ class SettingsController extends StateNotifier<SettingsState> {
         provisional: false,
         sound: true,
       );
-      await messaging.getToken(
+      final token = await messaging.getToken(
         vapidKey:
             "BPIjzv-Q3r9FfpS_cyNpOH02edDlMlBFnD9bOWXuifh4YL0z9-N0eVn0L0NWkB-NugKBaKf-s99NtBdU83EiYBg",
       );
-      _notificationsSubscription =
-          FirebaseMessaging.onMessage.listen((RemoteMessage message) {});
+      final user = FirebaseAuth.instance.currentUser!;
+      FirebaseFirestore.instance.doc('${user.uid}/settings').update(
+        {
+          'notificationTokens': FieldValue.arrayUnion(
+            [token],
+          ),
+        },
+      );
     }
   }
 
@@ -42,14 +50,13 @@ class SettingsController extends StateNotifier<SettingsState> {
 
   StreamSubscription<RemoteMessage>? _notificationsSubscription;
   Future<void> setNotificationsState(NotificationsState newState) async {
-    if (newState != state.notificationsState) {
-      if (newState == NotificationsState.enabled) {
-        await establishNotifications();
-      } else {
-        FirebaseMessaging.instance.deleteToken();
-        _notificationsSubscription?.cancel();
-      }
+    if (newState == NotificationsState.enabled) {
+      await establishNotifications();
+    } else {
+      FirebaseMessaging.instance.deleteToken();
+      _notificationsSubscription?.cancel();
     }
+
     state = state.copyWith(notificationsState: newState);
     await saveSettingsState(state);
   }

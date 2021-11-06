@@ -14,7 +14,7 @@ export const exportQuestions = functions.https.onRequest(async (request, respons
         const folder = body['folder']
         const user = body['user']
 
-        const questionsQuery = await admin.firestore().collection(user).doc(folder).collection('questions').get()
+        const questionsQuery = await admin.firestore().collection(user).doc('folders').collection('folders').doc(folder).collection('questions').get()
         const questions: FirebaseFirestore.DocumentData[] = []
         if (questionsQuery.size != 0) {
             questionsQuery.forEach(element => {
@@ -29,4 +29,20 @@ export const exportQuestions = functions.https.onRequest(async (request, respons
         console.log(e)
         response.status(500).send('An error occured')
     }
+})
+export const createUserSettings = functions.auth.user().onCreate((user) => {
+    return admin.firestore().collection(user.uid).doc('settings').set({ notificationsSate: 'disabled', runtimeType: 'default' });
+})
+export const sendNotification = functions.firestore.document('{userId}/folders/folders/{folderId}/questions/{docId}').onCreate(async (snap, contxt) => {
+    const notificationData = snap.data()
+    
+    const settings = await snap.ref.parent.parent?.parent.parent?.parent.doc('settings').get()
+    const tokens = settings?.get('notificationTokens') as string[]
+    return admin.messaging().sendMulticast({
+        tokens: tokens,
+        notification: {
+            title:notificationData.text,
+            body: notificationData.answer.text,
+        },
+    })
 })

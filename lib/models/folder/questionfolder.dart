@@ -21,14 +21,26 @@ abstract class QuestionFolder with _$QuestionFolder {
     final firestore = FirebaseFirestore.instance;
     final auth = FirebaseAuth.instance;
     final user = auth.currentUser!;
-    await firestore.collection(user.uid).doc(folder.uid).set(folder.toJson());
+    await firestore
+        .collection(user.uid)
+        .doc('folders')
+        .collection('folders')
+        .doc(folder.uid)
+        .set(folder.toJson());
   }
 
   static Stream<List<QuestionFolder>> fetchFolders() {
     final firestore = FirebaseFirestore.instance;
+
     final auth = FirebaseAuth.instance;
     final user = auth.currentUser!;
-    return firestore.collection(user.uid).snapshots().transform(
+
+    return firestore
+        .collection(user.uid)
+        .doc('folders')
+        .collection('folders')
+        .snapshots()
+        .transform(
       StreamTransformer.fromHandlers(
         handleData: (data, sink) {
           final folders = <QuestionFolder>[];
@@ -64,8 +76,8 @@ abstract class QuestionFolder with _$QuestionFolder {
             batch.set(
               firestore
                   .collection(user.uid)
-                  .doc(uid)
-                  .collection('questions')
+                  .doc('folders')
+                  .collection('folders')
                   .doc(question['uuid']),
               question,
             );
@@ -85,7 +97,12 @@ abstract class QuestionFolder with _$QuestionFolder {
     final firestore = FirebaseFirestore.instance;
     final auth = FirebaseAuth.instance;
     final user = auth.currentUser!;
-    await firestore.collection(user.uid).doc(uid).delete();
+    await firestore
+        .collection(user.uid)
+        .doc('folders')
+        .collection('folders')
+        .doc(uid)
+        .delete();
   }
 
   Stream<List<Question>> fetchQuestions() {
@@ -94,6 +111,8 @@ abstract class QuestionFolder with _$QuestionFolder {
     final user = auth.currentUser!;
     return firestore
         .collection(user.uid)
+        .doc('folders')
+        .collection('folders')
         .doc(uid)
         .collection('questions')
         .orderBy('createdAt')
@@ -125,6 +144,8 @@ abstract class QuestionFolder with _$QuestionFolder {
       () async {
         await firestore
             .collection(user.uid)
+            .doc('folders')
+            .collection('folders')
             .doc(uid)
             .collection('questions')
             .doc(question.uuid)
@@ -144,6 +165,8 @@ abstract class QuestionFolder with _$QuestionFolder {
     final user = auth.currentUser!;
     await firestore
         .collection(user.uid)
+        .doc('folders')
+        .collection('folders')
         .doc(uid)
         .collection('questions')
         .doc(uuid)
