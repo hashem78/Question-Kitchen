@@ -14,9 +14,87 @@ class QuestionTileWidget extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final shown = useValueNotifier(false);
+    final folder = useProvider(folderProvider);
     return ListTile(
       title: Text(question.text),
       onTap: () => shown.value = !shown.value,
+      onLongPress: () {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return HookBuilder(builder: (context) {
+              final questionController = useTextEditingController(
+                text: question.text,
+              );
+              final answerController = useTextEditingController(
+                text: question.answer.text,
+              );
+              return AlertDialog(
+                title: const Text('Edit Question'),
+                content: Wrap(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          const Text('Question'),
+                          TextField(
+                            controller: questionController,
+                            maxLines: null,
+                            decoration: const InputDecoration(
+                              border: InputBorder.none,
+                              filled: true,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          const Text('Answer'),
+                          TextField(
+                            controller: answerController,
+                            maxLines: null,
+                            decoration: const InputDecoration(
+                              border: InputBorder.none,
+                              filled: true,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () async{
+                      await question.update(
+                        folderId: folder.uid,
+                        newText: questionController.text,
+                        newAnswer: answerController.text,
+                      );
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Save'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Cancel'),
+                  ),
+                ],
+              );
+            });
+          },
+        );
+      },
       subtitle: useValueListenable(shown) ? Text(question.answer.text) : null,
       trailing: IconButton(
         onPressed: () async {
