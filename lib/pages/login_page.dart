@@ -48,7 +48,20 @@ class LoginPage extends StatelessWidget {
         }
         return null;
       },
-      onRecoverPassword: (data) {},
+      onRecoverPassword: (data) async {
+        try {
+          await FirebaseAuth.instance.sendPasswordResetEmail(email: data);
+        } on FirebaseAuthException catch (e) {
+          // auth/invalid-email
+          //// Thrown if the email address is not valid.
+          if (e.code == 'auth/invalid-email') {
+            return 'Email address isn\'t valid';
+          } else if (e.code == 'auth/user-not-found') {
+            return 'This email address isn\'t registered';
+          }
+          return null;
+        }
+      },
       onSubmitAnimationCompleted: () {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
@@ -63,6 +76,10 @@ class LoginPage extends StatelessWidget {
         ],
       ),
       passwordValidator: RequiredValidator(errorText: 'This field is required'),
+      messages: LoginMessages(
+        recoverPasswordDescription:
+            'We will send you an email with the steps to recover your password',
+      ),
     );
   }
 }
