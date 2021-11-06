@@ -36,7 +36,7 @@ class QSideBar extends HookWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Material(
-          color: Colors.lightBlue.shade600,
+          color: const Color(0xff2196f3),
           child: DefaultTextStyle(
             style: TextStyle(fontSize: 20.sp, color: Colors.white),
             child: IconTheme(
