@@ -57,6 +57,20 @@ abstract class QuestionFolder with _$QuestionFolder {
     );
   }
 
+  Future<void> update(String newFolderName) async {
+    final firestore = FirebaseFirestore.instance;
+    final auth = FirebaseAuth.instance;
+    final user = auth.currentUser!;
+    await firestore
+        .collection(user.uid)
+        .doc('folders')
+        .collection('folders')
+        .doc(uid)
+        .update(copyWith(
+          title: newFolderName,
+        ).toJson());
+  }
+
   Future<String> importQuestions(List<PlatformFile> files) async {
     var counter = 0;
     try {

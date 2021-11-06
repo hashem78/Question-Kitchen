@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:question_kitchen/models/folder/questionfolder.dart';
 import 'package:question_kitchen/pages/questions_page.dart';
 import 'package:question_kitchen/providers.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
 class FolderTileWidget extends StatelessWidget {
   const FolderTileWidget({
@@ -15,6 +16,47 @@ class FolderTileWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       title: Text(folder.title),
+      onLongPress: () async {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return HookBuilder(builder: (context) {
+              final nameController = useTextEditingController(
+                text: folder.title,
+              );
+              return AlertDialog(
+                title: const Text('Edit Folder Name'),
+                content: Wrap(
+                  children: [
+                    TextField(
+                      controller: nameController,
+                      decoration: const InputDecoration(
+                        border: InputBorder.none,
+                        filled: true,
+                      ),
+                    ),
+                  ],
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      folder.update(nameController.text);
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Save'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Cancel'),
+                  )
+                ],
+              );
+            });
+          },
+        );
+      },
       trailing: IconButton(
         onPressed: () async {
           final shouldRemove = await showDialog<bool>(
