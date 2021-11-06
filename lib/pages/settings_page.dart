@@ -16,6 +16,15 @@ class SettingsController extends StateNotifier<SettingsState> {
       : super(const SettingsState.loading()) {
     load();
   }
+
+  @override
+  void dispose() async {
+    await FirebaseMessaging.instance.deleteToken();
+    _notificationsSubscription?.cancel();
+    _userEventSubscriptions?.cancel();
+    super.dispose();
+  }
+
   Future<void> establishNotifications() async {
     if (state.notificationsState == NotificationsState.enabled) {
       final messaging = FirebaseMessaging.instance;
@@ -40,12 +49,25 @@ class SettingsController extends StateNotifier<SettingsState> {
           ),
         },
       );
+      _notificationsSubscription = FirebaseMessaging.onMessage.listen(
+        (message) {},
+      );
+    } else {
+      await FirebaseMessaging.instance.deleteToken();
+      _notificationsSubscription?.cancel();
     }
   }
 
+  StreamSubscription<User?>? _userEventSubscriptions;
   Future<void> load() async {
-    state = await loadSettingsState();
-    await establishNotifications();
+    _userEventSubscriptions ??= FirebaseAuth.instance.userChanges().listen(
+      (event) async {
+        if (event != null) {
+          state = await loadSettingsState();
+          await establishNotifications();
+        }
+      },
+    );
   }
 
   StreamSubscription<RemoteMessage>? _notificationsSubscription;
@@ -68,7 +90,7 @@ class SettingsController extends StateNotifier<SettingsState> {
 
 final settingsControllerProvider =
     StateNotifierProvider<SettingsController, SettingsState>(
-  (_) {
+  (ref) {
     return SettingsController();
   },
 );
