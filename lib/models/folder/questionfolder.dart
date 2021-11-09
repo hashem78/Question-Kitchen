@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:easy_debounce/easy_debounce.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -148,45 +147,7 @@ abstract class QuestionFolder with _$QuestionFolder {
     );
   }
 
-  Future<void> addQuestion(Question question) async {
-    final firestore = FirebaseFirestore.instance;
-    final auth = FirebaseAuth.instance;
-    final user = auth.currentUser!;
-    EasyDebounce.debounce(
-      'submit-question',
-      const Duration(seconds: 1),
-      () async {
-        await firestore
-            .collection(user.uid)
-            .doc('folders')
-            .collection('folders')
-            .doc(uid)
-            .collection('questions')
-            .doc(question.uuid)
-            .set(
-          {
-            'createdAt': FieldValue.serverTimestamp(),
-            ...question.toJson(),
-          },
-        );
-      },
-    );
-  }
-
-  Future<void> removeQuestion(String uuid) async {
-    final firestore = FirebaseFirestore.instance;
-    final auth = FirebaseAuth.instance;
-    final user = auth.currentUser!;
-    await firestore
-        .collection(user.uid)
-        .doc('folders')
-        .collection('folders')
-        .doc(uid)
-        .collection('questions')
-        .doc(uuid)
-        .delete();
-  }
-
+  
   factory QuestionFolder.fromJson(Map<String, dynamic> json) =>
       _$QuestionFolderFromJson(json);
 }

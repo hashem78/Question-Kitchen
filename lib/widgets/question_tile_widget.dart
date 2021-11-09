@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:question_kitchen/models/question/question.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:question_kitchen/providers.dart';
 
 class QuestionTileWidget extends HookWidget {
   const QuestionTileWidget({
@@ -14,7 +12,6 @@ class QuestionTileWidget extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final shown = useValueNotifier(false);
-    final folder = useProvider(folderProvider);
     return ListTile(
       title: Text(question.text),
       onTap: () => shown.value = !shown.value,
@@ -75,7 +72,6 @@ class QuestionTileWidget extends HookWidget {
                   TextButton(
                     onPressed: () async{
                       await question.update(
-                        folderId: folder.uid,
                         newText: questionController.text,
                         newAnswer: answerController.text,
                       );
@@ -136,7 +132,7 @@ class QuestionTileWidget extends HookWidget {
             );
             final closeReason = await controller.closed;
             if (closeReason != SnackBarClosedReason.action) {
-              await context.read(folderProvider).removeQuestion(question.uuid);
+              question.delete();
             }
           }
         },
