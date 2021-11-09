@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:question_kitchen/pages/folders_page.dart';
 import 'package:question_kitchen/pages/login_page.dart';
+import 'package:question_kitchen/pages/questions_page.dart';
 import 'package:question_kitchen/pages/settings_page.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
@@ -56,7 +57,10 @@ class MyApp extends HookWidget {
               textTheme: GoogleFonts.montserratTextTheme(),
             ),
             home: home,
-            routes: {'/settings': (context) => const SettingsPage()},
+            routes: {
+              '/settings': (context) => const SettingsPage(),
+              '/questionsPage':(context) => const QuestionsPage(),
+            },
           );
         },
       ),
