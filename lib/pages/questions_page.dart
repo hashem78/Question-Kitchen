@@ -45,8 +45,7 @@ class QuestionsPage extends HookWidget {
                 builder: (_) {
                   return ProviderScope(
                     overrides: [
-                      folderProvider
-                          .overrideWithValue(context.read(folderProvider)),
+                      folderProvider.overrideWithValue(folder),
                     ],
                     child: const NewQuestionCreationDialog(),
                   );

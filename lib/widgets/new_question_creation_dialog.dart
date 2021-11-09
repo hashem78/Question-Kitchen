@@ -1,3 +1,4 @@
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -6,6 +7,7 @@ import 'package:question_kitchen/models/answer/answer.dart';
 import 'package:question_kitchen/models/question/question.dart';
 import 'package:question_kitchen/providers.dart';
 import 'package:uuid/uuid.dart';
+
 final GlobalKey<FormState> _formKey = GlobalKey();
 
 class NewQuestionCreationDialog extends HookWidget {
@@ -17,6 +19,8 @@ class NewQuestionCreationDialog extends HookWidget {
   Widget build(BuildContext context) {
     final questionController = useTextEditingController();
     final answerController = useTextEditingController();
+    final priorityValue = useValueNotifier(QuestionPriority.none);
+
     final folder = useProvider(folderProvider);
     return AlertDialog(
       title: const Text('New Question'),
@@ -30,24 +34,58 @@ class NewQuestionCreationDialog extends HookWidget {
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextFormField(
-                controller: questionController,
-                autofocus: true,
-                maxLines: null,
-                decoration: const InputDecoration(
-                  hintText: 'What is the weather when the climate is tropic ?',
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Question'),
+                    TextFormField(
+                      controller: questionController,
+                      autofocus: true,
+                      maxLines: null,
+                      decoration: const InputDecoration(
+                        hintText:
+                            'What is the weather when the climate is tropic ?',
+                      ),
+                      validator: validateNewQuestionFields,
+                    ),
+                  ],
                 ),
-                validator: validateNewQuestionFields,
               ),
-              TextFormField(
-                maxLines: null,
-                controller: answerController,
-                decoration: const InputDecoration(
-                  hintText: 'It should be hotter than 50c',
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Answer'),
+                    TextFormField(
+                      maxLines: null,
+                      controller: answerController,
+                      decoration: const InputDecoration(
+                        hintText: 'It should be hotter than 50c',
+                      ),
+                      validator: validateNewQuestionFields,
+                    ),
+                  ],
                 ),
-                validator: validateNewQuestionFields,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('Priority'),
+                    NewQuestionPrioritySlider(
+                      onPriorityChanged: (priority) {
+                        priorityValue.value = priority;
+                      },
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -68,17 +106,71 @@ class NewQuestionCreationDialog extends HookWidget {
                 folderId: folder.uid,
                 uuid: const Uuid().v4(),
                 text: questionController.text,
-                priority: QuestionPriority.low,
+                priority: priorityValue.value,
                 answer: Answer.data(
                   text: answerController.text,
                 ),
               );
+              Navigator.pop(context);
             }
-            Navigator.pop(context);
           },
           child: const Text('Save'),
         ),
       ],
+    );
+  }
+}
+
+class NewQuestionPrioritySlider extends HookWidget {
+  const NewQuestionPrioritySlider({
+    Key? key,
+    required this.onPriorityChanged,
+  }) : super(key: key);
+
+  final void Function(QuestionPriority priority) onPriorityChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final sliderValue = useValueNotifier(0.0);
+    final sliderColor = useValueNotifier<Color?>(null);
+    final priorityValue =
+        useValueNotifier(QuestionPriority.none);
+    return Slider(
+      value: useValueListenable(sliderValue),
+      onChanged: (value) {
+        sliderValue.value = value;
+        switch (value.toInt()) {
+          case 0:
+            priorityValue.value = QuestionPriority.none;
+            onPriorityChanged(QuestionPriority.none);
+            sliderColor.value = null;
+            break;
+          case 1:
+            priorityValue.value = QuestionPriority.low;
+            onPriorityChanged(QuestionPriority.low);
+            sliderColor.value = Colors.grey;
+            break;
+          case 2:
+            priorityValue.value = QuestionPriority.medium;
+            onPriorityChanged(QuestionPriority.medium);
+            sliderColor.value = Colors.amber;
+            break;
+          case 3:
+            priorityValue.value = QuestionPriority.high;
+            onPriorityChanged(QuestionPriority.high);
+            sliderColor.value = Colors.red;
+            break;
+          default:
+        }
+      },
+      label: EnumToString.convertToString(
+        useValueListenable(priorityValue),
+      ),
+      activeColor: useValueListenable(sliderColor),
+      thumbColor: useValueListenable(sliderColor),
+      min: 0,
+      max: 3,
+      divisions: 3,
     );
   }
 }
