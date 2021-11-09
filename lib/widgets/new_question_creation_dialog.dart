@@ -19,7 +19,7 @@ class NewQuestionCreationDialog extends HookWidget {
     final answerController = useTextEditingController();
     final folder = useProvider(folderProvider);
     return AlertDialog(
-      title: Text('New Question'),
+      title: const Text('New Question'),
       content: Form(
         key: _formKey,
         child: Padding(
@@ -54,14 +54,13 @@ class NewQuestionCreationDialog extends HookWidget {
         ),
       ),
       actions: [
-        TextButton.icon(
+        TextButton(
           onPressed: () async {
             Navigator.pop(context);
           },
-          icon: Icon(Icons.cancel),
-          label: Text('Cancel'),
+          child: const Text('Cancel'),
         ),
-        TextButton.icon(
+        TextButton(
           onPressed: () async {
             final canSubmit = _formKey.currentState!.validate();
             if (canSubmit) {
@@ -77,8 +76,7 @@ class NewQuestionCreationDialog extends HookWidget {
             }
             Navigator.pop(context);
           },
-          icon: Icon(Icons.save),
-          label: Text('Save'),
+          child: const Text('Save'),
         ),
       ],
     );

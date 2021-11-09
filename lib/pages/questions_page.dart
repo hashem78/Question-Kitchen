@@ -29,8 +29,8 @@ class QuestionsPage extends HookWidget {
               PopupMenuButton<int>(
                 itemBuilder: (context) {
                   return [
-                    ImportPopupItem(folder),
-                    ExportPopupItem(folder),
+                    _ImportPopupItem(folder),
+                    _ExportPopupItem(folder),
                   ];
                 },
               ),
@@ -77,18 +77,18 @@ class QuestionsPage extends HookWidget {
   }
 }
 
-class ExportPopupItem extends PopupMenuItem<int> {
-  const ExportPopupItem(
+class _ExportPopupItem extends PopupMenuItem<int> {
+  const _ExportPopupItem(
     this.folder, {
     Key? key,
-  }) : super(key: key, child: const Text('Import'));
+  }) : super(key: key, child: const Text('Export'));
   final QuestionFolder folder;
   @override
   VoidCallback? get onTap => () async => await exportToJson(folder);
 }
 
-class ImportPopupItem extends PopupMenuItem<int> {
-  const ImportPopupItem(
+class _ImportPopupItem extends PopupMenuItem<int> {
+  const _ImportPopupItem(
     this.folder, {
     Key? key,
   }) : super(key: key, child: const Text('Import'));
