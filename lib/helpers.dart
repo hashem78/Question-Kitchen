@@ -5,6 +5,14 @@ import 'package:question_kitchen/models/folder/questionfolder.dart';
 import 'package:question_kitchen/models/settings/settingsstate.dart';
 import 'package:http/http.dart' as http;
 
+Future<User?> getFirebaseUser() async {
+  User? firebaseUser = FirebaseAuth.instance.currentUser;
+
+  firebaseUser ??= await FirebaseAuth.instance.userChanges().first;
+
+  return firebaseUser;
+}
+
 String? validateNewQuestionFields(String? value) {
   if (value == null || value == '') {
     return "This field can't be empty";
@@ -16,23 +24,23 @@ String? validateNewQuestionFields(String? value) {
 }
 
 Future<void> exportToJson(QuestionFolder folder) async {
-    final user = FirebaseAuth.instance.currentUser!;
-    final req = await http.post(
-      Uri.parse(
-        'https://us-central1-question-kitchen.cloudfunctions.net/exportQuestions',
-      ),
-      body: {
-        'user': user.uid,
-        'folder': folder.uid,
-      },
-    );
-    await FileSaver.instance.saveFile(
-      folder.title,
-      req.bodyBytes,
-      'json',
-      mimeType: MimeType.JSON,
-    );
-  }
+  final user = FirebaseAuth.instance.currentUser!;
+  final req = await http.post(
+    Uri.parse(
+      'https://us-central1-question-kitchen.cloudfunctions.net/exportQuestions',
+    ),
+    body: {
+      'user': user.uid,
+      'folder': folder.uid,
+    },
+  );
+  await FileSaver.instance.saveFile(
+    folder.title,
+    req.bodyBytes,
+    'json',
+    mimeType: MimeType.JSON,
+  );
+}
 
 Future<SettingsState> loadSettingsState() async {
   final auth = FirebaseAuth.instance;

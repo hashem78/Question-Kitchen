@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:question_kitchen/helpers.dart';
@@ -83,6 +85,18 @@ class SettingsController extends StateNotifier<SettingsState> {
     await saveSettingsState(state);
   }
 
+  Future<void> setTheme(ThemeMode theme) async {
+    state = state.copyWith(
+      userThemeMode: theme,
+      userBrightness: (theme == ThemeMode.system)
+          ? (SchedulerBinding.instance!.window.platformBrightness)
+          : (theme == ThemeMode.dark)
+              ? Brightness.dark
+              : Brightness.light,
+    );
+    await saveSettingsState(state);
+  }
+
   void setState(SettingsState newState) {
     state = newState;
   }
@@ -129,6 +143,74 @@ class SettingsPage extends HookWidget {
                         : 'Disabled',
                   ),
                 ),
+                ListTile(
+                  title: const Text('Theme'),
+                  subtitle: Text(
+                    EnumToString.convertToString(settingsState.userThemeMode),
+                  ),
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return HookBuilder(
+                          builder: (context) {
+                            final currentSettingsState = useProvider(
+                              settingsControllerProvider,
+                            );
+                            final themeMode = useValueNotifier(
+                              currentSettingsState.userThemeMode,
+                            );
+
+                            return AlertDialog(
+                              title: const Text('Theme'),
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  RadioListTile<ThemeMode>(
+                                    title: const Text('System'),
+                                    value: ThemeMode.system,
+                                    groupValue: useValueListenable(themeMode),
+                                    onChanged: (value) {
+                                      final settingsNotifier = context.read(
+                                        settingsControllerProvider.notifier,
+                                      );
+                                      themeMode.value = value!;
+                                      settingsNotifier.setTheme(value);
+                                    },
+                                  ),
+                                  RadioListTile<ThemeMode>(
+                                    title: const Text('Dark'),
+                                    value: ThemeMode.dark,
+                                    groupValue: useValueListenable(themeMode),
+                                    onChanged: (value) {
+                                      final settingsNotifier = context.read(
+                                        settingsControllerProvider.notifier,
+                                      );
+                                      themeMode.value = value!;
+                                      settingsNotifier.setTheme(value);
+                                    },
+                                  ),
+                                  RadioListTile<ThemeMode>(
+                                    title: const Text('Light'),
+                                    value: ThemeMode.light,
+                                    groupValue: useValueListenable(themeMode),
+                                    onChanged: (value) {
+                                      final settingsNotifier = context.read(
+                                        settingsControllerProvider.notifier,
+                                      );
+                                      themeMode.value = value!;
+                                      settingsNotifier.setTheme(value);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    );
+                  },
+                )
               ],
             ),
           ),

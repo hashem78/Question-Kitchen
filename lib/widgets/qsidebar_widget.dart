@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:question_kitchen/pages/login_page.dart';
+import 'package:question_kitchen/pages/settings_page.dart';
 
 class QSideBarController extends StateNotifier<bool> {
   QSideBarController() : super(false);
@@ -31,12 +32,16 @@ class QSideBar extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final brightness = useProvider(
+        settingsControllerProvider.select((value) => value.userBrightness));
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Material(
-          color: const Color(0xff2196f3),
+          color: brightness == Brightness.light
+              ? const Color(0xff2196f3)
+              : const Color(0xff424242),
           child: DefaultTextStyle(
             style: TextStyle(fontSize: 20.sp, color: Colors.white),
             child: IconTheme(
@@ -97,6 +102,7 @@ class QSideBar extends HookWidget {
     );
   }
 }
+
 class QSideBarEntry extends HookWidget {
   const QSideBarEntry({
     Key? key,
