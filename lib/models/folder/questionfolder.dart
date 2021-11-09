@@ -147,7 +147,6 @@ abstract class QuestionFolder with _$QuestionFolder {
     );
   }
 
-  
   factory QuestionFolder.fromJson(Map<String, dynamic> json) =>
       _$QuestionFolderFromJson(json);
 }

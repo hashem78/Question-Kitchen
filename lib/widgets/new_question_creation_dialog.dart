@@ -133,8 +133,7 @@ class NewQuestionPrioritySlider extends HookWidget {
   Widget build(BuildContext context) {
     final sliderValue = useValueNotifier(0.0);
     final sliderColor = useValueNotifier<Color?>(null);
-    final priorityValue =
-        useValueNotifier(QuestionPriority.none);
+    final priorityValue = useValueNotifier(QuestionPriority.none);
     return Slider(
       value: useValueListenable(sliderValue),
       onChanged: (value) {

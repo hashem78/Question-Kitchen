@@ -59,6 +59,3 @@ class FoldersPage extends HookWidget {
     );
   }
 }
-
-
-

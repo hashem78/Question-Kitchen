@@ -70,7 +70,7 @@ class QuestionTileWidget extends HookWidget {
                 ),
                 actions: [
                   TextButton(
-                    onPressed: () async{
+                    onPressed: () async {
                       await question.update(
                         newText: questionController.text,
                         newAnswer: answerController.text,
