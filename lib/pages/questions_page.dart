@@ -39,17 +39,18 @@ class QuestionsPage extends HookWidget {
           floatingActionButton: FloatingActionButton(
             child: const Icon(Icons.add),
             onPressed: () {
-              showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (_) {
-                  return ProviderScope(
-                    overrides: [
-                      folderProvider.overrideWithValue(folder),
-                    ],
-                    child: const NewQuestionCreationDialog(),
-                  );
-                },
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) {
+                    return ProviderScope(
+                      overrides: [
+                        folderProvider.overrideWithValue(folder),
+                      ],
+                      child: const NewQuestionCreationDialog(),
+                    );
+                  },
+                ),
               );
             },
           ),
